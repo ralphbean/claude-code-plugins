@@ -1,24 +1,18 @@
 {
   "name": "claude-code-plugins",
+  "version": "0.1.0",
+  "description": "Marketplace of personal Claude Code plugins: API integrations and productivity tools",
   "owner": {
     "name": "Ralph Bean",
     "email": "rbean@redhat.com"
   },
-  "metadata": {
-    "description": "Personal Claude Code skills: API integrations and productivity tools",
-    "version": "0.1.0"
-  },
   "plugins": [
     {
-      "name": "claude-code-plugins",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/ralphbean/claude-code-plugins.git"
-      },
-      "description": "Personal skills library with Slack search and other API integrations",
+      "name": "searching-slack-history",
+      "description": "Search Slack message history using Web API - provides patterns for search.messages and conversations.history endpoints",
       "version": "0.1.0",
-      "keywords": ["slack", "api-integrations", "personal-productivity"],
-      "strict": true
+      "source": "./plugins/searching-slack-history",
+      "category": "api-integrations"
     }
   ]
 }
