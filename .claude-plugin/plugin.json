@@ -1,0 +1,13 @@
+{
+  "name": "claude-code-plugins",
+  "description": "Personal Claude Code skills: API integrations, custom workflows, and productivity tools",
+  "version": "0.1.0",
+  "author": {
+    "name": "Ralph Bean",
+    "email": "rbean@redhat.com"
+  },
+  "homepage": "https://github.com/ralphbean/claude-code-plugins",
+  "repository": "https://github.com/ralphbean/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["skills", "slack", "api-integrations", "personal-productivity"]
+}
