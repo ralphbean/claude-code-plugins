@@ -1,0 +1,12 @@
+{
+  "name": "claude-code-plugins",
+  "description": "Personal Claude Code skills: API integrations and productivity tools",
+  "plugins": [
+    {
+      "name": "claude-code-plugins",
+      "description": "Personal skills library with Slack search and other API integrations",
+      "repository": "https://github.com/ralphbean/claude-code-plugins",
+      "branch": "main"
+    }
+  ]
+}
