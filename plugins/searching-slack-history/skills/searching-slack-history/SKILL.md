@@ -52,15 +52,19 @@ Search Slack message history using the Slack Web API.
 
 ## API Patterns
 
+**Security Note:** Never echo commands containing tokens. Use silent execution to prevent token exposure in terminal output.
+
 ### Search Messages Globally
 
 **Endpoint:** `POST https://slack.com/api/search.messages`
 
 **Use case:** Find messages across all channels the bot has access to.
 
-**Example using Bash with curl:**
+**Secure pattern (use this):**
 ```bash
-curl -X POST https://slack.com/api/search.messages \
+# Create curl command without echoing it
+cat > /tmp/slack_search.sh << 'SCRIPT'
+curl -s -X POST https://slack.com/api/search.messages \
   -H "Authorization: Bearer $SLACK_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -68,12 +72,25 @@ curl -X POST https://slack.com/api/search.messages \
     "count": 20,
     "sort": "timestamp"
   }'
+SCRIPT
+
+# Execute without showing token in terminal
+bash /tmp/slack_search.sh
+rm /tmp/slack_search.sh
 ```
 
-**Example using WebFetch (Claude Code):**
-```typescript
-// Note: WebFetch is for fetching web content, not making API calls
-// For API calls with authentication, use Bash with curl instead
+**Alternative secure pattern:**
+```bash
+# Use curl config file (doesn't appear in terminal/history)
+cat > /tmp/slack.curl << EOF
+header = "Authorization: Bearer $SLACK_TOKEN"
+header = "Content-Type: application/json"
+EOF
+
+curl -s -K /tmp/slack.curl -X POST https://slack.com/api/search.messages \
+  -d '{"query": "your search terms", "count": 20, "sort": "timestamp"}'
+
+rm /tmp/slack.curl
 ```
 
 **Query operators:**
@@ -101,15 +118,18 @@ curl -X POST https://slack.com/api/search.messages \
 
 **Important:** Requires channel ID, not channel name. Use `conversations.list` first if you only have the name.
 
-**Example:**
+**Secure pattern:**
 ```bash
-curl -X POST https://slack.com/api/conversations.history \
-  -H "Authorization: Bearer $SLACK_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "channel": "C1234567890",
-    "limit": 100
-  }'
+# Use config file to hide token
+cat > /tmp/slack.curl << EOF
+header = "Authorization: Bearer $SLACK_TOKEN"
+header = "Content-Type: application/json"
+EOF
+
+curl -s -K /tmp/slack.curl -X POST https://slack.com/api/conversations.history \
+  -d '{"channel": "C1234567890", "limit": 100}'
+
+rm /tmp/slack.curl
 ```
 
 **Time filtering:**
@@ -130,15 +150,17 @@ Timestamps are Unix epoch time with microseconds (e.g., `1609459200.000000` = 20
 
 **Use case:** Get channel ID when you only know the channel name.
 
-**Example:**
+**Secure pattern:**
 ```bash
-curl -X POST https://slack.com/api/conversations.list \
-  -H "Authorization: Bearer $SLACK_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "types": "public_channel,private_channel",
-    "exclude_archived": true
-  }'
+cat > /tmp/slack.curl << EOF
+header = "Authorization: Bearer $SLACK_TOKEN"
+header = "Content-Type: application/json"
+EOF
+
+curl -s -K /tmp/slack.curl -X POST https://slack.com/api/conversations.list \
+  -d '{"types": "public_channel,private_channel", "exclude_archived": true}'
+
+rm /tmp/slack.curl
 ```
 
 **Filter response:** Look for channel with matching `name` field, extract `id`.
@@ -148,12 +170,23 @@ curl -X POST https://slack.com/api/conversations.list \
 All endpoints return paginated results. Check for `response_metadata.next_cursor`:
 
 ```bash
+# Create reusable config (do this once)
+cat > /tmp/slack.curl << EOF
+header = "Authorization: Bearer $SLACK_TOKEN"
+header = "Content-Type: application/json"
+EOF
+
 # First request
-curl ... -d '{"query": "search", "cursor": ""}'
+curl -s -K /tmp/slack.curl -X POST https://slack.com/api/search.messages \
+  -d '{"query": "search", "cursor": ""}'
 
 # If response contains "next_cursor": "dXNlcjpVMDYxTkZUVDI="
-# Second request
-curl ... -d '{"query": "search", "cursor": "dXNlcjpVMDYxTkZUVDI="}'
+# Second request with cursor
+curl -s -K /tmp/slack.curl -X POST https://slack.com/api/search.messages \
+  -d '{"query": "search", "cursor": "dXNlcjpVMDYxTkZUVDI="}'
+
+# Clean up when done
+rm /tmp/slack.curl
 ```
 
 Continue until `next_cursor` is empty or not present.
@@ -187,13 +220,15 @@ Continue until `next_cursor` is empty or not present.
 - Add `groups:history` and `groups:read` scopes
 - Invite bot to private channel: `/invite @YourBotName`
 
-### 6. Token Exposure
-**Risk:** Hardcoded tokens in scripts or commits give workspace access to anyone.
+### 6. Token Exposure in Terminal
+**Risk:** Running curl with `-H "Authorization: Bearer $SLACK_TOKEN"` displays token in terminal output and shell history.
 
 **Fix:**
-- Always use environment variables: `$SLACK_TOKEN`
-- Add `.env` to `.gitignore`
-- Rotate token immediately if exposed
+- **ALWAYS** use curl config files (`-K /tmp/slack.curl`) to hide token
+- Create config file with headers, run curl referencing it, delete config after
+- Never echo commands containing `$SLACK_TOKEN`
+- Add `.env` to `.gitignore` if storing tokens in files
+- Rotate token immediately if exposed in logs or history
 
 ## Response Format
 
@@ -237,27 +272,28 @@ Error responses have `"ok": false`:
 **Scenario:** Find all messages about "deployment" in #engineering from last week.
 
 ```bash
-# 1. Get channel ID
-curl -X POST https://slack.com/api/conversations.list \
-  -H "Authorization: Bearer $SLACK_TOKEN" \
-  -H "Content-Type: application/json" \
+# 1. Create secure config file
+cat > /tmp/slack.curl << EOF
+header = "Authorization: Bearer $SLACK_TOKEN"
+header = "Content-Type: application/json"
+EOF
+
+# 2. Get channel ID (pipe to jq to extract)
+curl -s -K /tmp/slack.curl -X POST https://slack.com/api/conversations.list \
   -d '{"types": "public_channel"}' \
   | jq -r '.channels[] | select(.name=="engineering") | .id'
 # Returns: C1234567890
 
-# 2. Calculate timestamps (Unix epoch)
-# 7 days ago: date -d "7 days ago" +%s
-# Today: date +%s
-
-# 3. Search messages
-curl -X POST https://slack.com/api/search.messages \
-  -H "Authorization: Bearer $SLACK_TOKEN" \
-  -H "Content-Type: application/json" \
+# 3. Search messages with date filter
+curl -s -K /tmp/slack.curl -X POST https://slack.com/api/search.messages \
   -d '{
     "query": "deployment in:#engineering after:2025-10-24",
     "count": 100,
     "sort": "timestamp"
   }'
+
+# 4. Clean up config file
+rm /tmp/slack.curl
 ```
 
 ## Further Reading
