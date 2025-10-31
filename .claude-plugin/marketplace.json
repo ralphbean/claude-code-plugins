@@ -1,12 +1,24 @@
 {
   "name": "claude-code-plugins",
-  "description": "Personal Claude Code skills: API integrations and productivity tools",
+  "owner": {
+    "name": "Ralph Bean",
+    "email": "rbean@redhat.com"
+  },
+  "metadata": {
+    "description": "Personal Claude Code skills: API integrations and productivity tools",
+    "version": "0.1.0"
+  },
   "plugins": [
     {
       "name": "claude-code-plugins",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/ralphbean/claude-code-plugins.git"
+      },
       "description": "Personal skills library with Slack search and other API integrations",
-      "repository": "https://github.com/ralphbean/claude-code-plugins",
-      "branch": "main"
+      "version": "0.1.0",
+      "keywords": ["slack", "api-integrations", "personal-productivity"],
+      "strict": true
     }
   ]
 }
