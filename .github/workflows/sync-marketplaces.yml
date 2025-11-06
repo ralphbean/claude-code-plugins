@@ -1,0 +1,30 @@
+name: Sync Marketplaces
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # Weekly on Monday 2 AM UTC
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync from chmouel's marketplace
+        uses: ralphbean/claude-marketplace-sync@main
+        with:
+          config-path: '.sync-config.json'
+          verbose: 'true'
+
+      - name: Commit changes
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .claude-plugin/marketplace.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: sync marketplaces - $(date -u +"%Y-%m-%d %H:%M UTC")"
+            git push
+          fi
