@@ -13,6 +13,13 @@
       "version": "0.1.0",
       "source": "./plugins/searching-slack-history",
       "category": "api-integrations"
+    },
+    {
+      "name": "deslop",
+      "description": "Remove AI-generated code slop with multi-phase analysis, style learning, and safe confirmation workflow",
+      "version": "1.0.0",
+      "source": "https://github.com/chmouel/claude-code-plugins/tree/main/plugins/deslop",
+      "category": "development"
     }
   ]
 }
