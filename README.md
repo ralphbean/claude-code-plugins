@@ -38,6 +38,13 @@ Each plugin can be installed independently via `/plugin install <plugin-name>`.
 
 ## Marketplace Aggregation
 
+This marketplace automatically syncs selected plugins from other marketplaces using **[claude-marketplace-sync](https://github.com/ralphbean/claude-marketplace-sync)**:
+
+- **Synced from [chmouel/claude-code-plugins](https://github.com/chmouel/claude-code-plugins)**: `deslop` plugin
+  - Automatically synced weekly via GitHub Actions
+  - Tagged with `chmouel` prefix for provenance tracking
+  - Other plugins from chmouel's marketplace are filtered out via denylist
+
 Want to create hierarchical marketplaces for your organization? Check out **[claude-marketplace-sync](https://github.com/ralphbean/claude-marketplace-sync)** - a tool for aggregating multiple Claude Code marketplaces with denylist support and provenance tracking.
 
 Perfect for organizations that want:

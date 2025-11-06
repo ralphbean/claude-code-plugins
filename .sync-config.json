@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "marketplace": {
+    "name": "claude-code-plugins",
+    "version": "0.1.0",
+    "description": "Ralph Bean's Claude Code plugins marketplace",
+    "owner": {
+      "name": "Ralph Bean",
+      "email": "rbean@redhat.com"
+    }
+  },
+  "sources": [
+    {
+      "type": "marketplace",
+      "url": "https://github.com/chmouel/claude-code-plugins",
+      "branch": "main",
+      "denylist": ["bug-hunter", "git-commit", "jira-ticket", "weekly-review"],
+      "tag_prefix": "chmouel"
+    }
+  ],
+  "sync_settings": {
+    "exclude_patterns": [".git", ".github", "node_modules"],
+    "provenance_field": "source_marketplace"
+  }
+}
