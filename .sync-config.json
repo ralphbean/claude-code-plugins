@@ -11,6 +11,15 @@
   },
   "sources": [
     {
+      "type": "skill",
+      "name": "searching-slack-history",
+      "description": "Search Slack message history using Web API - provides patterns for search.messages and conversations.history endpoints",
+      "url": "https://github.com/ralphbean/claude-code-plugins",
+      "branch": "main",
+      "category": "api-integrations",
+      "target_path": "plugins/searching-slack-history"
+    },
+    {
       "type": "marketplace",
       "url": "https://github.com/chmouel/claude-code-plugins",
       "branch": "main",
