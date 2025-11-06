@@ -8,6 +8,14 @@
   },
   "plugins": [
     {
+      "name": "searching-slack-history",
+      "description": "Search Slack message history using Web API - provides patterns for search.messages and conversations.history endpoints",
+      "version": "1.0.0",
+      "source": "./plugins/searching-slack-history",
+      "category": "api-integrations",
+      "source_marketplace": "direct"
+    },
+    {
       "name": "deslop",
       "description": "Remove AI-generated code slop with multi-phase analysis, style learning, and safe confirmation workflow",
       "version": "1.0.0",
