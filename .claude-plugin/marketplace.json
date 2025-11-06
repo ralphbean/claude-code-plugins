@@ -1,25 +1,19 @@
 {
   "name": "claude-code-plugins",
   "version": "0.1.0",
-  "description": "Marketplace of personal Claude Code plugins: API integrations and productivity tools",
+  "description": "Ralph Bean's Claude Code plugins marketplace",
   "owner": {
     "name": "Ralph Bean",
     "email": "rbean@redhat.com"
   },
   "plugins": [
     {
-      "name": "searching-slack-history",
-      "description": "Search Slack message history using Web API - provides patterns for search.messages and conversations.history endpoints",
-      "version": "0.1.0",
-      "source": "./plugins/searching-slack-history",
-      "category": "api-integrations"
-    },
-    {
       "name": "deslop",
       "description": "Remove AI-generated code slop with multi-phase analysis, style learning, and safe confirmation workflow",
       "version": "1.0.0",
-      "source": "https://github.com/chmouel/claude-code-plugins/tree/main/plugins/deslop",
-      "category": "development"
+      "source": "./plugins/deslop",
+      "category": "development",
+      "source_marketplace": "chmouel"
     }
   ]
 }
