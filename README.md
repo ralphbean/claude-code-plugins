@@ -36,6 +36,16 @@ claude-code-plugins/           (marketplace repository)
 
 Each plugin can be installed independently via `/plugin install <plugin-name>`.
 
+## Marketplace Aggregation
+
+Want to create hierarchical marketplaces for your organization? Check out **[claude-marketplace-sync](https://github.com/ralphbean/claude-marketplace-sync)** - a tool for aggregating multiple Claude Code marketplaces with denylist support and provenance tracking.
+
+Perfect for organizations that want:
+- Department-level marketplaces that roll up to org-level
+- Distributed ownership of plugin collections
+- Selective inclusion/exclusion of plugins from child marketplaces
+- Automatic provenance tracking showing where each plugin came from
+
 ## Adding New Plugins
 
 To add a new plugin to this marketplace:
@@ -48,7 +58,7 @@ To add a new plugin to this marketplace:
 
 ## Contributing
 
-This is a personal plugin marketplace, but feel free to fork and adapt for your own use.
+This is a personal plugin marketplace. Feel free to fork and adapt for your own use!
 
 ## License
 
