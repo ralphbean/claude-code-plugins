@@ -1311,3 +1311,170 @@ Re-scoring should show current value and ask for confirmation.
 **Do:** Specific errors: "Error: Cannot write to cell B4. Spreadsheet may be read-only. Check sharing permissions."
 
 ---
+
+## Example Workflow
+
+This example walks through a complete options analysis from start to finish.
+
+**Scenario:** Choosing a cloud provider for a new application.
+
+### Session Start
+
+**User:** "I need to choose between AWS, Azure, and Google Cloud for my app."
+
+**Claude (with skill):** "I'm using the options-analysis skill to help you systematically evaluate your options."
+
+[Skill checks for Google Sheets MCP server - found]
+
+**Claude:** "Do you have an existing options analysis spreadsheet, or should I create a new one?"
+
+**User:** "Create a new one."
+
+### Phase 2: Define Options
+
+**Claude:** "What options are you evaluating? Please list them separated by commas."
+
+**User:** "AWS, Azure, Google Cloud"
+
+[Skill creates spreadsheet "Options Analysis - Cloud Provider Selection"]
+[Skill creates Analysis sheet with header row]
+[Skill creates Metadata sheet with workflow state]
+
+**Claude:** "✓ Phase 2 Complete: Options defined. Analysis sheet created with 3 options: AWS, Azure, Google Cloud. Next: Define decision areas and their weights (Phase 3)"
+
+### Phase 3: Define Areas & Weights
+
+**Claude:** "What are the key decision areas you want to evaluate? These group related considerations together."
+
+**User:** "Reliability, Cost, Performance, Developer Experience"
+
+**Claude:** "On a scale of relative importance, how would you weight Reliability?"
+
+**User:** "40%"
+
+**Claude:** "How would you weight Cost?"
+
+**User:** "30%"
+
+**Claude:** "How would you weight Performance?"
+
+**User:** "20%"
+
+**Claude:** "How would you weight Developer Experience?"
+
+**User:** "10%"
+
+[Skill normalizes weights - already sum to 100%]
+[Skill writes to Metadata sheet]
+[Skill assigns colors: Reliability=Blue, Cost=Green, Performance=Yellow, DevEx=Orange]
+
+**Claude:** "✓ Phase 3 Complete: Areas & Weights defined. 4 decision areas created with normalized weights. Next: Define specific considerations within each area (Phase 4)"
+
+### Phase 4: Define Considerations
+
+**Claude:** "What specific considerations fall under Reliability? List them separated by commas."
+
+**User:** "SLA guarantees, multi-region support, disaster recovery, monitoring tools"
+
+[Skill records 4 considerations for Reliability]
+
+**Claude:** "What specific considerations fall under Cost?"
+
+**User:** "Pricing model, free tier, cost optimization tools"
+
+[Skill records 3 considerations for Cost]
+
+**Claude:** "What specific considerations fall under Performance?"
+
+**User:** "Latency, throughput, global CDN, caching options"
+
+[Skill records 4 considerations for Performance]
+
+**Claude:** "What specific considerations fall under Developer Experience?"
+
+**User:** "Documentation quality, community support, ease of setup"
+
+[Skill records 3 considerations for Developer Experience]
+
+[Skill builds Analysis sheet structure with colored areas and tree-formatted considerations]
+[Skill applies data validation (0-5) and conditional formatting to all score cells]
+
+**Claude:** "✓ Phase 4 Complete: Considerations defined. 14 considerations added across 4 areas. Total scoring cells to complete: 42 (14 considerations × 3 options). Next: Score each option for each consideration (Phase 5)"
+
+### Phase 5: Scoring
+
+**Claude:** "Scoring Progress: 0 of 42 cells scored (0%). Let's start scoring. Score AWS for SLA guarantees (under Reliability). Scale: 0=Poor, 5=Excellent. Score (0-5):"
+
+**User:** "4"
+
+**Claude:** "Provide a brief justification for this score:"
+
+**User:** "99.99% uptime SLA, proven track record, clear escalation process"
+
+[Skill writes 4 to Analysis!B4, adds comment]
+
+**Claude:** "✓ Scored AWS for SLA guarantees: 4/5. Progress: 1 of 42 cells scored (2%). Remaining: 41 cells. Score AWS for Multi-region support?"
+
+**User:** "5"
+
+**Claude:** "Justification?"
+
+**User:** "Mature multi-region architecture, automatic failover, extensive global presence"
+
+[Process continues for all 42 cells...]
+
+[After 30 minutes and 42 scores...]
+
+**Claude:** "✓ Phase 5 Complete: All scoring finished. 42 of 42 cells scored (100%). All options have been evaluated across all considerations. Justifications saved as cell comments. Next: Generate summary with weighted scoring (Phase 6)"
+
+### Phase 6: Summary Generation
+
+[Skill creates Summary sheet]
+[Skill writes headers: Option, Raw Score, Weighted Score, Rank]
+[Skill writes option names in column A]
+[Skill calculates raw scores using AVERAGE]
+[Skill builds SUMPRODUCT formulas for weighted scores based on area ranges]
+[Skill adds RANK formulas]
+[Skill applies conditional formatting to Rank column]
+
+**Claude:** "✓ Phase 6 Complete: Summary generated.
+
+Final Rankings:
+1. AWS - Weighted Score: 76.20 (Raw: 4.14)
+2. Google Cloud - Weighted Score: 71.50 (Raw: 3.93)
+3. Azure - Weighted Score: 68.30 (Raw: 3.79)
+
+Summary sheet created with raw scores, weighted scores, and automatic ranking. Formulas will update automatically if scores change. Analysis complete! You can now review the Summary sheet, add more options or considerations, or share the spreadsheet."
+
+### Phase 7: Maintenance (Later Session)
+
+[User returns to spreadsheet next week]
+
+**User:** "I want to add Oracle Cloud as a fourth option."
+
+**Claude (with skill):** [Detects existing spreadsheet, reads Metadata]
+
+**Claude:** "Options Analysis Status:
+✓ Options defined (3 options: AWS, Azure, Google Cloud)
+✓ Areas defined (4 areas with weights)
+✓ Considerations defined (14 considerations)
+✓ Scoring complete (42 of 42 cells scored)
+✓ Summary created
+
+You're in Maintenance Mode. What would you like to do?"
+
+**User:** "Add new option"
+
+**Claude:** "What is the name of the new option?"
+
+**User:** "Oracle Cloud"
+
+[Skill inserts new column E in Analysis sheet]
+[Skill updates Summary sheet with new row and formulas]
+[Skill marks scoring_complete as FALSE]
+
+**Claude:** "✓ New option added: Oracle Cloud. Analysis sheet updated with new column. Summary formulas updated. 14 cells need scoring for Oracle Cloud. Returning to scoring phase..."
+
+[Skill resumes scoring for just the Oracle Cloud column]
+
+---
