@@ -250,3 +250,97 @@ Copy this checklist to TodoWrite at the start of each session. Update task statu
 Phases 2-6 can be partially completed and resumed. Phase 7 is entered after initial analysis is complete.
 
 ---
+## Phase Details
+
+### Phase 2: Define Options
+
+**Goal:** Establish the options being evaluated (e.g., AWS, Azure, GCP).
+
+**Prerequisites:** Spreadsheet created (empty or has ID)
+
+**Steps:**
+
+#### Step 1: Prompt for options
+
+Ask user: "What options are you evaluating? Please list them separated by commas."
+
+Example user response: "AWS, Azure, Google Cloud Platform"
+
+Parse response into array: `["AWS", "Azure", "Google Cloud Platform"]`
+
+#### Step 2: Create/update Analysis sheet
+
+**If Analysis sheet doesn't exist:**
+
+Use MCP tool to create sheet named "Analysis"
+
+**Set up header row (Row 1):**
+
+| A | B | C | D |
+|---|---|---|---|
+| Consideration | AWS | Azure | Google Cloud Platform |
+
+Write to cells:
+- A1: "Consideration"
+- B1: First option name
+- C1: Second option name
+- ... (one column per option)
+
+**Formatting:**
+- Row 1: Bold, freeze row (so it stays visible when scrolling)
+- Font size: 11pt
+- Background: Light gray (#F3F3F3)
+
+#### Step 3: Create Metadata sheet
+
+Create sheet named "Metadata"
+
+**Write initial structure:**
+
+```
+     A                     B        C          D
+1  Options Analysis Metadata
+2
+3  Options:
+4  [List options here]
+5
+6  Areas & Weights:
+7  (To be defined in Phase 3)
+8
+9  Workflow State:
+10 options_defined       TRUE
+11 areas_defined         FALSE
+12 considerations_defined FALSE
+13 scoring_complete      FALSE
+14 summary_created       FALSE
+```
+
+Write cells:
+- A1: "Options Analysis Metadata" (Bold, size 14)
+- A3: "Options:"
+- A4: Join options with ", " (e.g., "AWS, Azure, Google Cloud Platform")
+- A6: "Areas & Weights:"
+- A9: "Workflow State:"
+- A10: "options_defined", B10: "TRUE"
+- A11: "areas_defined", B11: "FALSE"
+- A12: "considerations_defined", B12: "FALSE"
+- A13: "scoring_complete", B13: "FALSE"
+- A14: "summary_created", B14: "FALSE"
+
+#### Step 4: Update TodoWrite and report
+
+Mark Phase 2 as complete in TodoWrite.
+
+Report to user:
+```
+✓ Phase 2 Complete: Options defined
+
+Analysis sheet created with [N] options: [option names]
+Metadata sheet initialized with workflow state.
+
+Next: Define decision areas and their weights (Phase 3)
+```
+
+Proceed to Phase 3 or return to menu based on user preference.
+
+---
