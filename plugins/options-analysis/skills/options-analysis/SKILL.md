@@ -344,3 +344,100 @@ Next: Define decision areas and their weights (Phase 3)
 Proceed to Phase 3 or return to menu based on user preference.
 
 ---
+### Phase 3: Define Areas & Weights
+
+**Goal:** Create conceptual decision areas (e.g., Reliability, Cost) and assign importance weights.
+
+**Prerequisites:** Phase 2 complete (options defined)
+
+**Steps:**
+
+#### Step 1: Prompt for areas
+
+Ask user: "What are the key decision areas you want to evaluate? These group related considerations together."
+
+Examples to suggest:
+- Technical: "Reliability, Performance, Security, Scalability"
+- Business: "Cost, Vendor Support, Ecosystem, Compliance"
+- User Experience: "Usability, Documentation, Community, Tooling"
+
+Parse response into array of area names.
+
+#### Step 2: Prompt for weights
+
+For each area, ask: "On a scale of relative importance, how would you weight [Area Name]? You can use percentages (e.g., 30%) or relative numbers (e.g., 3). I'll normalize them afterward."
+
+Collect weights for all areas.
+
+**Normalization:**
+
+Example inputs: Reliability: 40, Cost: 30, Security: 20, Usability: 10
+
+Sum: 100 (already normalized)
+
+If sum ≠ 100, normalize:
+- Reliability: 40/100 * 100 = 40%
+- Cost: 30/100 * 100 = 30%
+- Security: 20/100 * 100 = 20%
+- Usability: 10/100 * 100 = 10%
+
+#### Step 3: Write areas to Metadata sheet
+
+Update Metadata sheet starting at row 7:
+
+```
+     A              B
+6  Areas & Weights:
+7  Reliability     40
+8  Cost            30
+9  Security        20
+10 Usability       10
+```
+
+For each area:
+- Column A: Area name
+- Column B: Normalized weight (as number, e.g., 40 not 40%)
+
+#### Step 4: Choose colors for areas
+
+Assign distinct, pleasant background colors to each area for visual grouping:
+
+| Area Index | Color Name | Hex Code |
+|------------|------------|----------|
+| 1 | Light Blue | #CFE2F3 |
+| 2 | Light Green | #D9EAD3 |
+| 3 | Light Yellow | #FFF2CC |
+| 4 | Light Orange | #F4CCCC |
+| 5 | Light Purple | #D9D2E9 |
+| 6 | Light Teal | #D0E0E3 |
+
+Cycle through colors if more than 6 areas.
+
+Store color mapping in memory for Phase 4.
+
+#### Step 5: Update workflow state
+
+Update Metadata!B11 to "TRUE" (areas_defined)
+
+#### Step 6: Report and proceed
+
+Mark Phase 3 complete in TodoWrite.
+
+Report:
+```
+✓ Phase 3 Complete: Areas & Weights defined
+
+4 decision areas created:
+- Reliability (40%)
+- Cost (30%)
+- Security (20%)
+- Usability (10%)
+
+Weights normalized to sum to 100%.
+
+Next: Define specific considerations within each area (Phase 4)
+```
+
+Proceed to Phase 4 or return to menu.
+
+---
