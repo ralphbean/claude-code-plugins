@@ -987,3 +987,221 @@ What would you like to do?
 Use AskUserQuestion tool to present menu.
 
 ---
+
+## Google Sheets Operations Reference
+
+This section documents common MCP operations used throughout the skill.
+
+### Creating Sheets
+
+**Create new spreadsheet:**
+```
+Use: mcp__google-sheets__create_spreadsheet
+Parameters:
+  - title: "Options Analysis - [Project Name]"
+Result: spreadsheet_id
+```
+
+**Create new sheet within spreadsheet:**
+```
+Use: mcp__google-sheets__create_sheet
+Parameters:
+  - spreadsheet_id: [id from above]
+  - title: "Analysis" | "Summary" | "Metadata"
+```
+
+### Reading Data
+
+**Read single cell:**
+```
+Use: mcp__google-sheets__read_cell
+Parameters:
+  - spreadsheet_id
+  - sheet: "Metadata"
+  - cell: "B10"  # e.g., options_defined status
+Result: cell value
+```
+
+**Read range:**
+```
+Use: mcp__google-sheets__read_range
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - range: "A1:Z100"  # or specific range like "B4:D7"
+Result: 2D array of values
+```
+
+**List sheets:**
+```
+Use: mcp__google-sheets__list_sheets
+Parameters:
+  - spreadsheet_id
+Result: Array of sheet names
+```
+
+### Writing Data
+
+**Write single cell:**
+```
+Use: mcp__google-sheets__write_cell
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - cell: "B4"
+  - value: 4  # or "AWS" for text
+```
+
+**Write range (batch write):**
+```
+Use: mcp__google-sheets__write_range
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - range: "A1:D1"
+  - values: [["Consideration", "AWS", "Azure", "GCP"]]
+```
+
+**Write formula:**
+```
+Use: mcp__google-sheets__write_cell
+Parameters:
+  - spreadsheet_id
+  - sheet: "Summary"
+  - cell: "C2"
+  - value: "=SUMPRODUCT(Metadata!B7:B10, {AVERAGE(Analysis!B4:B7), AVERAGE(Analysis!B10:B11)})/100"
+  - is_formula: true  # Important: treat as formula, not string
+```
+
+### Formatting
+
+**Set cell background color:**
+```
+Use: mcp__google-sheets__format_cells
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - range: "A3:D3"  # Area header row
+  - format:
+      backgroundColor: "#CFE2F3"  # Light blue
+```
+
+**Set font formatting:**
+```
+Use: mcp__google-sheets__format_cells
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - range: "A1:D1"  # Header row
+  - format:
+      bold: true
+      fontSize: 11
+```
+
+**Merge cells:**
+```
+Use: mcp__google-sheets__merge_cells
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - range: "A3:D3"  # Area header spans all option columns
+```
+
+**Freeze rows:**
+```
+Use: mcp__google-sheets__freeze_rows
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - rows: 1  # Freeze first row (headers)
+```
+
+### Data Validation
+
+**Set dropdown or numeric constraints:**
+```
+Use: mcp__google-sheets__set_data_validation
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - range: "B4:D50"  # All score cells
+  - validation:
+      type: "NUMBER_BETWEEN"
+      min: 0
+      max: 5
+      strict: true  # Reject invalid input
+```
+
+### Conditional Formatting
+
+**Color scale based on value:**
+```
+Use: mcp__google-sheets__set_conditional_formatting
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - range: "B4:D50"
+  - rules:
+    - condition: "NUMBER_BETWEEN"
+      min: 0
+      max: 1
+      format: {backgroundColor: "#F4CCCC"}  # Red
+    - condition: "NUMBER_BETWEEN"
+      min: 2
+      max: 3
+      format: {backgroundColor: "#FFF2CC"}  # Yellow
+    - condition: "NUMBER_BETWEEN"
+      min: 4
+      max: 5
+      format: {backgroundColor: "#D9EAD3"}  # Green
+```
+
+### Comments
+
+**Add comment to cell:**
+```
+Use: mcp__google-sheets__add_comment
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - cell: "B4"
+  - comment: "Strong multi-region support with automated failover."
+```
+
+**Read comment from cell:**
+```
+Use: mcp__google-sheets__read_comment
+Parameters:
+  - spreadsheet_id
+  - sheet: "Analysis"
+  - cell: "B4"
+Result: comment text
+```
+
+### Common Patterns
+
+**Pattern 1: Write header row with formatting**
+```
+1. Write values: write_range(A1:D1, [["Consideration", "AWS", "Azure", "GCP"]])
+2. Format bold: format_cells(A1:D1, {bold: true})
+3. Format background: format_cells(A1:D1, {backgroundColor: "#F3F3F3"})
+4. Freeze row: freeze_rows(1)
+```
+
+**Pattern 2: Insert area header with color**
+```
+1. Write area name with weight: write_cell(A3, "Reliability (40%)")
+2. Merge across columns: merge_cells(A3:D3)
+3. Format bold: format_cells(A3:D3, {bold: true, fontSize: 12})
+4. Set background color: format_cells(A3:D3, {backgroundColor: "#CFE2F3"})
+```
+
+**Pattern 3: Add consideration row with validation**
+```
+1. Write consideration name: write_cell(A4, "  ├─ Multi-region support")
+2. Set row background: format_cells(A4:D4, {backgroundColor: "#E8F0FE"})  # Lighter blue
+3. Set data validation: set_data_validation(B4:D4, {type: "NUMBER_BETWEEN", min: 0, max: 5})
+4. Set conditional formatting: set_conditional_formatting(B4:D4, [...color rules...])
+```
+
+---
