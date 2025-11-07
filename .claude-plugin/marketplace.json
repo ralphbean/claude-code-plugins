@@ -12,24 +12,21 @@
       "description": "Search Slack message history using Web API - provides patterns for search.messages and conversations.history endpoints",
       "version": "1.0.0",
       "source": "./plugins/searching-slack-history",
-      "category": "api-integrations",
-      "source_marketplace": "direct"
+      "category": "api-integrations"
     },
     {
       "name": "deslop",
       "description": "Remove AI-generated code slop with multi-phase analysis, style learning, and safe confirmation workflow",
       "version": "1.0.0",
       "source": "./plugins/deslop",
-      "category": "development",
-      "source_marketplace": "chmouel"
+      "category": "development"
     },
     {
       "name": "options-analysis",
       "description": "Structured multi-criteria decision analysis with weighted scoring spreadsheets",
       "version": "1.0.0",
       "source": "./plugins/options-analysis",
-      "category": "productivity",
-      "source_marketplace": "direct"
+      "category": "productivity"
     }
   ]
 }
