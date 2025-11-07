@@ -441,3 +441,119 @@ Next: Define specific considerations within each area (Phase 4)
 Proceed to Phase 4 or return to menu.
 
 ---
+### Phase 4: Define Considerations
+
+**Goal:** Add specific evaluation criteria under each decision area, with visual grouping.
+
+**Prerequisites:** Phase 3 complete (areas and weights defined)
+
+**Steps:**
+
+#### Step 1: Read areas from Metadata
+
+Read Metadata sheet rows 7+ to get list of areas and their assigned colors.
+
+#### Step 2: For each area, prompt for considerations
+
+For each area, ask: "What specific considerations fall under [Area Name]? List them separated by commas."
+
+Example for "Reliability" area:
+User response: "Multi-region support, Disaster recovery options, SLA guarantees, Monitoring capabilities"
+
+Parse into array: `["Multi-region support", "Disaster recovery options", "SLA guarantees", "Monitoring capabilities"]`
+
+Repeat for all areas.
+
+#### Step 3: Build Analysis sheet structure
+
+Start writing to Analysis sheet at row 3 (row 1 is header, row 2 blank for spacing).
+
+Current row tracker: `current_row = 3`
+
+**For each area:**
+
+1. **Write area header row:**
+   - A[current_row]: Area name + weight, e.g., "Reliability (40%)"
+   - Format:
+     - Bold font
+     - Font size: 12pt
+     - Background color: Area's assigned color (from Phase 3)
+     - Merge cells A[current_row]:[last_option_column][current_row]
+   - Increment: `current_row += 1`
+
+2. **Write consideration rows:**
+   - For each consideration in this area:
+     - A[current_row]: "  ├─ " + consideration name (e.g., "  ├─ Multi-region support")
+     - Use "  └─ " for the last consideration in the area
+     - Format:
+       - Normal font (not bold)
+       - Background color: Lighter shade of area color (add 30% white overlay)
+     - For score columns (B through last option):
+       - Leave cell empty (for scoring in Phase 5)
+       - Set data validation: Whole number between 0 and 5
+       - Set conditional formatting:
+         - 0-1: Red background (#F4CCCC)
+         - 2-3: Yellow background (#FFF2CC)
+         - 4-5: Green background (#D9EAD3)
+     - Increment: `current_row += 1`
+
+3. **Add blank row for spacing:**
+   - Increment: `current_row += 1`
+
+#### Step 4: Example structure
+
+After this phase, Analysis sheet should look like:
+
+```
+     A                          B      C       D
+1  Consideration              AWS   Azure   GCP
+2
+3  Reliability (40%)          [merged across all columns, light blue bg]
+4    ├─ Multi-region support  [empty] [empty] [empty]
+5    ├─ Disaster recovery     [empty] [empty] [empty]
+6    ├─ SLA guarantees        [empty] [empty] [empty]
+7    └─ Monitoring            [empty] [empty] [empty]
+8
+9  Cost (30%)                 [merged across all columns, light green bg]
+10   ├─ Total cost of ownership [empty] [empty] [empty]
+11   └─ Licensing model       [empty] [empty] [empty]
+12
+...
+```
+
+All empty cells have data validation (0-5) and conditional formatting.
+
+#### Step 5: Update Metadata workflow state
+
+Update Metadata!B12 to "TRUE" (considerations_defined)
+
+#### Step 6: Calculate total scoring cells
+
+Count total empty score cells: `num_options * num_considerations`
+
+Store this in memory for progress tracking in Phase 5.
+
+#### Step 7: Report and proceed
+
+Mark Phase 4 complete in TodoWrite.
+
+Report:
+```
+✓ Phase 4 Complete: Considerations defined
+
+18 considerations added across 4 areas:
+- Reliability: 4 considerations
+- Cost: 2 considerations
+- Security: 8 considerations
+- Usability: 4 considerations
+
+Total scoring cells to complete: 54 (18 considerations × 3 options)
+
+Data validation and conditional formatting applied to all score cells.
+
+Next: Score each option for each consideration (Phase 5)
+```
+
+Proceed to Phase 5 or return to menu.
+
+---
