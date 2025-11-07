@@ -853,3 +853,137 @@ Analysis complete! You can now:
 Proceed to Phase 7 (Maintenance Mode) or end session.
 
 ---
+### Phase 7: Maintenance Mode
+
+**Goal:** Extend or modify completed analysis.
+
+**Prerequisites:** Phase 6 complete (summary generated) OR any phase complete and user wants to make changes
+
+**Available Operations:**
+
+#### Operation A: Add New Option
+
+**When:** User wants to evaluate an additional alternative.
+
+**Steps:**
+
+1. Prompt for new option name
+2. Insert new column in Analysis sheet:
+   - Insert after last existing option column
+   - Header (row 1): New option name
+   - Copy data validation and conditional formatting from existing option column
+3. Update Summary sheet:
+   - Add new row with option name
+   - Copy formulas from existing rows, adjust column references
+4. Mark scoring as incomplete:
+   - Update Metadata!B13 to "FALSE" (scoring_complete)
+5. Return to Phase 5 to score new option across all considerations
+
+**Important:** Formulas in Summary sheet must be updated to include new column.
+
+#### Operation B: Add New Consideration
+
+**When:** User realizes an important criterion was missed.
+
+**Steps:**
+
+1. Prompt: "Which area does this consideration belong to?"
+2. Display list of existing areas for selection
+3. Prompt for consideration name
+4. Find the area's section in Analysis sheet
+5. Insert new row:
+   - After last consideration in that area, before blank row
+   - Column A: "  ├─ " + consideration name (or "  └─ " if now last in area)
+   - Update previous last consideration from "  └─ " to "  ├─ "
+   - Score columns: Empty with data validation (0-5) and conditional formatting
+6. Update Summary sheet formulas:
+   - Adjust AVERAGE range for that area to include new row
+7. Mark scoring as incomplete:
+   - Update Metadata!B13 to "FALSE"
+8. Return to Phase 5 to score new consideration for all options
+
+#### Operation C: Add New Area
+
+**When:** User wants to add entirely new decision category.
+
+**Steps:**
+
+1. Prompt for area name and weight
+2. Recalculate and normalize all weights (including new area)
+3. Update Metadata sheet with new area and normalized weights
+4. Assign color to new area (next in rotation)
+5. Insert area header row in Analysis sheet:
+   - Append at bottom (after last area)
+   - Format with assigned color
+6. Prompt for considerations under this area
+7. Add consideration rows (same as Operation B)
+8. Update Summary sheet formulas to include new area in SUMPRODUCT
+9. Mark areas_defined, considerations_defined, and scoring_complete as FALSE
+10. Return to Phase 5 for scoring
+
+#### Operation D: Modify Area Weights
+
+**When:** User wants to change importance of decision areas.
+
+**Steps:**
+
+1. Display current weights from Metadata sheet
+2. Prompt for new weights (can modify one or all)
+3. Normalize new weights to sum to 100%
+4. Update Metadata sheet weights (column B, rows 7+)
+5. Summary sheet formulas automatically recalculate (they reference Metadata)
+6. Display updated rankings
+
+**Note:** This doesn't require re-scoring; formulas update automatically.
+
+#### Operation E: Re-score Specific Cells
+
+**When:** User wants to revise a previous score.
+
+**Steps:**
+
+1. Prompt: "Which option and consideration would you like to re-score?"
+2. Display current score and justification (from cell and comment)
+3. Prompt for new score and justification
+4. Update cell value and comment
+5. Summary formulas automatically recalculate
+
+#### Operation F: Review and Export
+
+**When:** Analysis is complete and user wants to share.
+
+**Steps:**
+
+1. Display Summary sheet rankings
+2. Offer to:
+   - Generate shareable link
+   - Adjust sharing permissions
+   - Export to PDF (if MCP server supports)
+   - Create presentation slides (future enhancement)
+
+#### Maintenance Menu
+
+When in Maintenance Mode, present this menu:
+
+```
+Analysis Complete - Maintenance Mode
+
+Current rankings (as of last update):
+1. AWS (78.50)
+2. Azure (71.20)
+3. GCP (65.80)
+
+What would you like to do?
+1. Add new option
+2. Add new consideration
+3. Add new decision area
+4. Modify area weights
+5. Re-score specific cells
+6. Review and share
+7. Return to main menu
+8. End session
+```
+
+Use AskUserQuestion tool to present menu.
+
+---
