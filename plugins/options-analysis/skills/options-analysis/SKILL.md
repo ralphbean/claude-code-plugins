@@ -217,3 +217,36 @@ Use AskUserQuestion tool to present menu with options.
 Based on user selection and current state, jump to the relevant phase section below.
 
 ---
+
+## The Workflow
+
+When starting this skill, create a TodoWrite checklist to track progress:
+
+```markdown
+Options Analysis Workflow:
+- [ ] Phase 1: State Detection & Orientation
+- [ ] Phase 2: Define Options
+- [ ] Phase 3: Define Areas & Weights
+- [ ] Phase 4: Define Considerations
+- [ ] Phase 5: Scoring
+- [ ] Phase 6: Summary Generation
+- [ ] Phase 7: Maintenance (ongoing)
+```
+
+Copy this checklist to TodoWrite at the start of each session. Update task status as you progress through phases.
+
+### Phase Overview
+
+| Phase | Goal | Output |
+|-------|------|--------|
+| 1. State Detection | Determine current analysis state | Navigation menu |
+| 2. Define Options | Set up options being evaluated | Analysis sheet with option columns |
+| 3. Define Areas & Weights | Create decision areas with importance weights | Metadata sheet with normalized weights |
+| 4. Define Considerations | Add specific criteria under each area | Analysis sheet with colored, grouped rows |
+| 5. Scoring | Collect scores and justifications for each cell | Populated Analysis sheet |
+| 6. Summary Generation | Calculate weighted scores and ranking | Summary sheet with formulas |
+| 7. Maintenance | Add options/considerations, modify weights | Updated analysis |
+
+Phases 2-6 can be partially completed and resumed. Phase 7 is entered after initial analysis is complete.
+
+---
