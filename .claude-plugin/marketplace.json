@@ -22,6 +22,14 @@
       "source": "./plugins/deslop",
       "category": "development",
       "source_marketplace": "chmouel"
+    },
+    {
+      "name": "options-analysis",
+      "description": "Structured multi-criteria decision analysis with weighted scoring spreadsheets",
+      "version": "1.0.0",
+      "source": "./plugins/options-analysis",
+      "category": "productivity",
+      "source_marketplace": "direct"
     }
   ]
 }
