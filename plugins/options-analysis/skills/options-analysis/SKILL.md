@@ -676,3 +676,180 @@ Next: Generate summary with weighted scoring (Phase 6)
 Proceed to Phase 6 or return to menu.
 
 ---
+### Phase 6: Summary Generation
+
+**Goal:** Create Summary sheet with weighted scoring formulas and ranking.
+
+**Prerequisites:** Phase 5 complete (all cells scored)
+
+**Steps:**
+
+#### Step 1: Create Summary sheet
+
+Use MCP tool to create sheet named "Summary"
+
+#### Step 2: Set up Summary sheet structure
+
+**Row 1 - Headers:**
+
+| A | B | C | D |
+|---|---|---|---|
+| Option | Raw Score | Weighted Score | Rank |
+
+Format: Bold, background #F3F3F3, freeze row
+
+#### Step 3: Write option names
+
+For each option (from Analysis!B1, C1, D1...):
+
+Write to Summary column A, starting row 2:
+- A2: First option name (e.g., "AWS")
+- A3: Second option name
+- ... etc
+
+#### Step 4: Calculate Raw Score (simple average)
+
+For each option row in Summary:
+
+**Formula for Raw Score (column B):**
+
+Example for AWS (Summary!B2):
+```
+=AVERAGE(Analysis!B:B)
+```
+
+BUT we need to exclude:
+- Header row (row 1)
+- Area header rows (merged cells)
+- Empty cells
+
+**Better formula using AVERAGEIF:**
+
+```
+=AVERAGEIF(Analysis!B:B, ">-1", Analysis!B:B)
+```
+
+This averages all numeric values in column B of Analysis sheet.
+
+Write this formula to Summary!B2 (for first option).
+
+Adjust column reference for each option (B for first, C for second, etc.).
+
+#### Step 5: Calculate Weighted Score
+
+**This is the critical formula to avoid consideration-count bias.**
+
+Read areas and weights from Metadata sheet (rows 7+).
+
+For each area:
+1. Identify which rows in Analysis belong to this area
+2. Calculate AVERAGE of scores for this option in those rows
+3. Multiply by area weight
+4. Sum across all areas
+
+**Formula structure for AWS (Summary!C2):**
+
+```excel
+=SUMPRODUCT(
+  Metadata!B7:B10,  // Area weights (40, 30, 20, 10)
+  {
+    AVERAGE(Analysis!B4:B7),   // Reliability scores (rows 4-7)
+    AVERAGE(Analysis!B10:B11), // Cost scores (rows 10-11)
+    AVERAGE(Analysis!B14:B21), // Security scores (rows 14-21)
+    AVERAGE(Analysis!B24:B27)  // Usability scores (rows 24-27)
+  }
+) / 100
+```
+
+**Dynamic formula generation:**
+
+Since row ranges depend on how many considerations per area, we need to:
+
+1. Read Analysis sheet to determine area row ranges
+2. Build the array formula dynamically
+3. Write formula to cell
+
+**Pseudocode:**
+```
+areas = read_metadata_areas()  // [(name, weight, color), ...]
+area_ranges = []
+
+for area in areas:
+  start_row = find_area_header_row(area.name) + 1
+  end_row = start_row + count_considerations_in_area(area) - 1
+  area_ranges.append(f"AVERAGE(Analysis!B{start_row}:B{end_row})")
+
+formula = f"=SUMPRODUCT(Metadata!B7:B{6+len(areas)}, {{{','.join(area_ranges)}}})/100"
+
+write_cell(Summary!C2, formula)
+```
+
+Repeat for each option, adjusting column (B→C→D...).
+
+#### Step 6: Add Rank formula
+
+For each option in Summary:
+
+**Formula for Rank (column D):**
+
+```
+=RANK(C2, $C$2:$C$[last_row], 0)
+```
+
+This ranks based on Weighted Score (column C), descending order (0 = highest is rank 1).
+
+Example for AWS (Summary!D2):
+```
+=RANK(C2, $C$2:$C$4, 0)
+```
+
+Assuming 3 options (rows 2-4).
+
+#### Step 7: Apply conditional formatting to Rank
+
+Format Rank column with colors:
+- Rank 1: Green background (#D9EAD3), bold
+- Rank 2: Yellow background (#FFF2CC)
+- Rank 3+: Light red background (#F4CCCC)
+
+#### Step 8: Format numbers
+
+- Raw Score: 2 decimal places (e.g., 3.45)
+- Weighted Score: 2 decimal places (e.g., 72.30)
+- Rank: Whole number (e.g., 1)
+
+#### Step 9: Update Metadata workflow state
+
+Update Metadata!B14 to "TRUE" (summary_created)
+
+All workflow states now TRUE - analysis complete!
+
+#### Step 10: Report results
+
+Mark Phase 6 complete in TodoWrite.
+
+Display summary results:
+```
+✓ Phase 6 Complete: Summary generated
+
+Final Rankings:
+1. AWS - Weighted Score: 78.50 (Raw: 4.20)
+2. Azure - Weighted Score: 71.20 (Raw: 3.85)
+3. Google Cloud Platform - Weighted Score: 65.80 (Raw: 3.50)
+
+Summary sheet created with:
+- Raw scores (simple average across all considerations)
+- Weighted scores (area-weighted average)
+- Automatic ranking
+
+Formulas will update automatically if scores change.
+
+Analysis complete! You can now:
+- Review the Summary sheet for final rankings
+- Add more options or considerations (Phase 7 - Maintenance)
+- Share the spreadsheet with stakeholders
+```
+
+Proceed to Phase 7 (Maintenance Mode) or end session.
+
+---
