@@ -1,0 +1,13 @@
+{
+  "name": "options-analysis",
+  "description": "Structured multi-criteria decision analysis with weighted scoring - creates systematic Google Sheets for evaluating options",
+  "version": "1.0.0",
+  "author": {
+    "name": "Ralph Bean",
+    "email": "rbean@redhat.com"
+  },
+  "homepage": "https://github.com/ralphbean/claude-code-plugins",
+  "repository": "https://github.com/ralphbean/claude-code-plugins",
+  "license": "MIT",
+  "keywords": ["decision-analysis", "mcda", "google-sheets", "scoring", "options"]
+}
