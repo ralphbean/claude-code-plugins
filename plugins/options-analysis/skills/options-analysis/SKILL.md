@@ -124,3 +124,96 @@ Test the connection:
    - Service account has access to spreadsheet
 
 ---
+
+## Quick Reference
+
+| Current State | Detected By | Next Phase |
+|---------------|-------------|------------|
+| No spreadsheet | User hasn't provided URL | Create new spreadsheet |
+| Empty spreadsheet | No sheets named "Analysis", "Summary", "Metadata" | Define options |
+| Has Metadata sheet | Read workflow checklist from Metadata | Jump to incomplete phase |
+| `options_defined: false` | Metadata.B8 = FALSE | Define Options (Phase 2) |
+| `areas_defined: false` | Metadata.B9 = FALSE | Define Areas & Weights (Phase 3) |
+| `considerations_defined: false` | Metadata.B10 = FALSE | Define Considerations (Phase 4) |
+| `scoring_complete: false` | Metadata.B11 = FALSE | Scoring (Phase 5) |
+| `summary_created: false` | Metadata.B12 = FALSE | Summary Generation (Phase 6) |
+| All checklist items TRUE | All Metadata workflow flags = TRUE | Maintenance Mode (Phase 7) |
+
+---
+
+## State Detection Logic
+
+When the skill is invoked, follow this sequence:
+
+### Step 1: Get Spreadsheet Reference
+
+Ask user: "Do you have an existing options analysis spreadsheet, or should I create a new one?"
+
+**If new:**
+- Prompt for analysis name/title
+- Create new spreadsheet with that title
+- Proceed to Phase 2 (Define Options)
+
+**If existing:**
+- Prompt for spreadsheet URL or ID
+- Extract spreadsheet ID from URL (format: `https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/edit`)
+- Proceed to Step 2
+
+### Step 2: Read Spreadsheet Structure
+
+Use MCP tool to list sheets in spreadsheet.
+
+**Check for key sheets:**
+- "Analysis" sheet exists?
+- "Summary" sheet exists?
+- "Metadata" sheet exists?
+
+**If no sheets exist:** Fresh spreadsheet, go to Phase 2 (Define Options)
+
+**If Metadata sheet exists:** Read workflow state (Step 3)
+
+**If only Analysis exists, no Metadata:** Corrupted state - offer to create Metadata sheet and infer state from Analysis structure
+
+### Step 3: Read Metadata Sheet Workflow State
+
+Metadata sheet structure:
+```
+     A                     B
+7  Workflow State
+8  options_defined       TRUE/FALSE
+9  areas_defined         TRUE/FALSE
+10 considerations_defined TRUE/FALSE
+11 scoring_complete      TRUE/FALSE
+12 summary_created       TRUE/FALSE
+```
+
+Read cells B8:B12 to determine which phases are complete.
+
+### Step 4: Display Current State and Menu
+
+Example output:
+```
+Options Analysis Status:
+✓ Options defined (3 options: AWS, Azure, GCP)
+✓ Areas defined (4 areas with weights)
+✓ Considerations defined (18 considerations across areas)
+○ Scoring in progress (42 of 54 cells scored - 78%)
+○ Summary not yet created
+
+What would you like to do?
+1. Continue scoring (12 cells remaining)
+2. Add new option
+3. Add new consideration or area
+4. Modify area weights
+5. Review current scores
+6. Generate summary (requires all scoring complete)
+7. Start fresh analysis (will archive current work)
+```
+
+Use AskUserQuestion tool to present menu with options.
+
+### Step 5: Route to Appropriate Phase
+
+Based on user selection and current state, jump to the relevant phase section below.
+
+---
