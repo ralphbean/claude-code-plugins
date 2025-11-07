@@ -1205,3 +1205,109 @@ Result: comment text
 ```
 
 ---
+
+## Common Mistakes
+
+### 1. Not Normalizing Area Weights
+
+**Symptom:** Weighted scores don't make sense, rankings seem arbitrary.
+
+**Cause:** Area weights don't sum to 100%, so formula produces incorrect results.
+
+**Fix:** Always normalize weights after collecting them:
+```
+total = sum(all_weights)
+normalized_weight = (weight / total) * 100
+```
+
+### 2. Incorrect SUMPRODUCT Formula
+
+**Symptom:** All options get the same weighted score, or scores are way off.
+
+**Cause:** Using simple AVERAGE across all considerations instead of area-weighted average.
+
+**Wrong:**
+```
+=AVERAGE(Analysis!B:B) * 100
+```
+
+**Correct:**
+```
+=SUMPRODUCT(Metadata!B7:B10, {AVERAGE(Analysis!B4:B7), AVERAGE(Analysis!B10:B11), ...})/100
+```
+
+**Why:** Each area must be averaged separately first, then multiplied by its weight.
+
+### 3. Hardcoding Row Numbers in Formulas
+
+**Symptom:** Formulas break when adding new considerations or areas.
+
+**Cause:** Using fixed ranges like `B4:B7` that don't adjust when rows are inserted.
+
+**Fix:** When adding considerations, regenerate Summary formulas with updated ranges. OR use named ranges that expand automatically.
+
+### 4. Forgetting to Update Workflow State
+
+**Symptom:** Skill resumes in wrong phase, menu shows incorrect options.
+
+**Cause:** Not updating Metadata workflow cells (B10:B14) after completing phases.
+
+**Fix:** Always update Metadata!B[row] to "TRUE" when completing a phase.
+
+### 5. Not Setting Data Validation
+
+**Symptom:** Users enter invalid scores (e.g., 10, -1, "good"), breaking formulas.
+
+**Cause:** Forgot to set data validation on score cells.
+
+**Fix:** Apply data validation (0-5, whole numbers, strict) to all score cells immediately when creating consideration rows.
+
+### 6. Skipping Cell Comments
+
+**Symptom:** Scores exist but no one remembers why they were assigned.
+
+**Cause:** Not collecting justifications or not saving them as comments.
+
+**Fix:** Always prompt for justification after each score, save as cell comment.
+
+### 7. Manually Editing Metadata Sheet
+
+**Symptom:** Skill loses track of state, formulas break, areas disappear.
+
+**Cause:** User or skill directly edited Metadata structure without following format.
+
+**Fix:** Only modify Metadata through skill operations. If corrupted, offer to rebuild from Analysis sheet structure.
+
+## Anti-Patterns
+
+### Don't: Mix Phase Orders Without State Updates
+
+Jumping between phases (e.g., adding options in Phase 7 but not marking scoring_complete as FALSE) creates inconsistent state.
+
+**Do:** Update ALL relevant workflow flags when making structural changes.
+
+### Don't: Use Row Numbers in Menu Display
+
+Telling user "row 23 needs scoring" is cryptic.
+
+**Do:** Always display human-readable labels: "AWS - Multi-region support" not "cell B23"
+
+### Don't: Require All Scoring Before Summary
+
+While recommended, forcing 100% scoring before allowing summary generation is too rigid.
+
+**Do:** Allow summary generation at any point, but warn if incomplete: "Warning: Only 42 of 54 cells scored. Rankings may be inaccurate."
+
+### Don't: Overwrite Existing Scores Without Confirmation
+
+Re-scoring should show current value and ask for confirmation.
+
+**Do:** Display current score and justification, ask "Update this score? (Y/N)"
+
+### Don't: Use Generic Error Messages
+
+"Error writing to sheet" doesn't help debug.
+
+**Do:** Specific errors: "Error: Cannot write to cell B4. Spreadsheet may be read-only. Check sharing permissions."
+
+---
