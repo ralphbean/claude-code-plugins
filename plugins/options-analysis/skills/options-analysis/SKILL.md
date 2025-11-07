@@ -557,3 +557,122 @@ Next: Score each option for each consideration (Phase 5)
 Proceed to Phase 5 or return to menu.
 
 ---
+### Phase 5: Scoring
+
+**Goal:** Collect scores (0-5) and justifications for each option-consideration pair.
+
+**Prerequisites:** Phase 4 complete (considerations defined)
+
+**Steps:**
+
+#### Step 1: Identify unscored cells
+
+Scan Analysis sheet for empty cells in score columns (columns B onward, excluding area header rows).
+
+Build list of unscored cells with their coordinates and labels:
+- Cell: B4
+- Option: "AWS" (from column B header)
+- Consideration: "Multi-region support" (from column A, removing tree chars)
+- Area: "Reliability" (from nearest area header above)
+
+#### Step 2: Display progress
+
+Calculate and display progress:
+```
+Scoring Progress: 42 of 54 cells scored (78%)
+
+Remaining cells by area:
+- Reliability: 3 cells
+- Cost: 5 cells
+- Security: 2 cells
+- Usability: 2 cells
+```
+
+#### Step 3: Prompt for scores
+
+**For each unscored cell:**
+
+Use AskUserQuestion or direct prompt:
+
+"Score [Option] for [Consideration] (under [Area]):
+
+Scale:
+0 = Poor/Not supported
+1 = Minimal/Barely adequate
+2 = Below average
+3 = Average/Acceptable
+4 = Good/Above average
+5 = Excellent/Best in class
+
+Score (0-5): "
+
+Wait for user input (validate it's a number 0-5).
+
+**Then prompt for justification:**
+
+"Provide a brief justification for this score (this will be saved as a cell comment): "
+
+Wait for user input (1-2 sentences recommended).
+
+#### Step 4: Write score and comment
+
+- Write the numeric score to the cell
+- Add the justification as a cell comment/note using Google Sheets MCP
+
+Example MCP call (pseudocode):
+```
+mcp__google-sheets__write_cell(
+  spreadsheet_id=current_spreadsheet,
+  sheet="Analysis",
+  cell="B4",
+  value=4
+)
+
+mcp__google-sheets__add_comment(
+  spreadsheet_id=current_spreadsheet,
+  sheet="Analysis",
+  cell="B4",
+  comment="Strong multi-region support with automated failover. Tested in production."
+)
+```
+
+#### Step 5: Update progress
+
+After each score, recalculate and display progress:
+```
+✓ Scored AWS for Multi-region support: 4/5
+
+Progress: 43 of 54 cells scored (80%)
+Remaining: 11 cells
+```
+
+#### Step 6: Handle interruptions
+
+User can pause anytime. Skill should:
+- Save all scores entered so far
+- Return to menu
+- When resumed, detect which cells are still empty and continue from there
+
+#### Step 7: Completion detection
+
+When all cells are scored (no empty score cells remain):
+
+Update Metadata!B13 to "TRUE" (scoring_complete)
+
+Mark Phase 5 complete in TodoWrite.
+
+Report:
+```
+✓ Phase 5 Complete: All scoring finished
+
+54 of 54 cells scored (100%)
+
+All options have been evaluated across all considerations.
+Justifications saved as cell comments.
+
+Next: Generate summary with weighted scoring (Phase 6)
+```
+
+Proceed to Phase 6 or return to menu.
+
+---
