@@ -18,15 +18,12 @@
       "name": "deslop",
       "description": "Remove AI-generated code slop with multi-phase analysis, style learning, and safe confirmation workflow",
       "version": "1.0.0",
-      "source": "./plugins/deslop",
+      "source": {
+        "source": "github",
+        "repo": "chmouel/claude-code-plugins",
+        "path": "plugins/deslop"
+      },
       "category": "development"
-    },
-    {
-      "name": "options-analysis",
-      "description": "Structured multi-criteria decision analysis with weighted scoring spreadsheets",
-      "version": "1.0.0",
-      "source": "./plugins/options-analysis",
-      "category": "productivity"
     }
   ]
 }
