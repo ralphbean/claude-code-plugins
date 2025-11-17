@@ -15,6 +15,17 @@
       "category": "api-integrations"
     },
     {
+      "name": "codereview",
+      "version": "1.0.1",
+      "description": "Make code reviews easier with AI assistance.",
+      "source": {
+        "source": "github",
+        "repo": "chmouel/claude-code-plugins",
+        "path": "plugins/codereview"
+      },
+      "category": "development"
+    },
+    {
       "name": "deslop",
       "description": "Remove AI-generated code slop with multi-phase analysis, style learning, and safe confirmation workflow",
       "version": "1.0.0",
